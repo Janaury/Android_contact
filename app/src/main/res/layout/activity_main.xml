@@ -22,6 +22,7 @@
         android:layout_below="@id/toolbar"
         android:background="@color/colorFloatBar"
         android:gravity="center_vertical"
+        android:elevation="4dp"
         android:paddingLeft="16dp"
         android:paddingRight="16dp"
         app:layout_constraintEnd_toEndOf="parent"
@@ -60,8 +61,8 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:background="@color/colorPrimary"
-            android:drawableTop="@mipmap/ic_launcher_round"
+
+            android:background="@color/colorActive"
             android:gravity="center"
             android:text="联系人"
             android:textColor="@color/colorWhite" />
@@ -71,10 +72,10 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_weight="1"
+            android:elevation="8dp"
             android:background="@color/colorPrimary"
-            android:drawableTop="@mipmap/ic_launcher_round"
             android:gravity="center"
-            android:text="通讯录"
+            android:text="通话记录"
             android:textColor="@color/colorWhite" />
     </LinearLayout>
 

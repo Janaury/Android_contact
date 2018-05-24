@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">电话本</string>
+    <string name="search_hint">输入内容来搜索</string>
 </resources>

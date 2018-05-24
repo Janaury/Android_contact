@@ -1,5 +1,10 @@
 package com.example.january.contact;
 
+import android.app.SearchManager;
+import android.content.Context;
+import android.content.Intent;
+import android.database.Cursor;
+import android.provider.ContactsContract;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.DividerItemDecoration;
@@ -11,6 +16,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -28,6 +34,12 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        Intent intent = getIntent();
+        if(intent != null){
+            handleIntent(intent);
+        }
+
+
         initialToolbar();
         initialBottomNav();
         initialContactsData();
@@ -36,17 +48,29 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
+    protected void onNewIntent(Intent intent){
+        handleIntent(intent);
+    }
+
+    @Override
     public boolean onCreateOptionsMenu(Menu menu){
         MenuInflater menu_inflater = getMenuInflater();
         menu_inflater.inflate(R.menu.main_activity_menu, menu);
+
+        // Get the SearchView and set the searchable configuration
+        SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+        SearchView searchView = (SearchView) menu.findItem(R.id.contact_search).getActionView();
+        // Assumes current activity is the searchable activity
+        searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
+        searchView.setIconifiedByDefault(true   ); // Do not iconify the widget; expand it by default
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item){
         switch(item.getItemId()){
-            case R.id.record:
-                Toast.makeText(this, "你点击了通话记录", Toast.LENGTH_SHORT).show();
+            case R.id.setting:
+                Toast.makeText(this, "你点击了设置按钮", Toast.LENGTH_SHORT).show();
                 break;
         }
         return true;
@@ -55,6 +79,7 @@ public class MainActivity extends AppCompatActivity {
     private void initialToolbar(){
         Toolbar toolbar = (Toolbar)findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        toolbar.setElevation(16);
     }
 
     private void initialContactsListView(){
@@ -138,7 +163,7 @@ public class MainActivity extends AppCompatActivity {
             }
 
 
-            Log.d(TAG, "onScrolled: " + String.valueOf(hover_first_char_view_top));
+            //Log.d(TAG, "onScrolled: " + String.valueOf(hover_first_char_view_top));
 
         }
 
@@ -150,11 +175,36 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void initialContactsData() {
-        for(int i=0; i<5; i++)
-            contacts.add(new ContactDetails("Bob", "B"));
-        for(int i=0; i<500; i++)
-            contacts.add(new ContactDetails("Jack", "J"));
-        for(int i=0; i<5; i++)
-            contacts.add(new ContactDetails("小明", "X"));
+        Cursor cursor = getContentResolver().query(
+                ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null, null,
+                null, "sort_key");
+        if(cursor == null){
+            return;
+        }
+        while (cursor.moveToNext()) {
+            String name = cursor
+                    .getString(cursor
+                            .getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME));
+            String number = cursor
+                    .getString(cursor
+                            .getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
+            int num = contacts.size() - 1;
+            if(num >= 0) {
+                String last_name = contacts.get(num).getName();
+                if (!name.equals(last_name))
+                    contacts.add(new ContactDetails(name, name.substring(0, 1)));
+            }else{
+                contacts.add(new ContactDetails(name, name.substring(0, 1)));
+            }
+        }
+        if (cursor != null) {
+            cursor.close();
+        }
+    }
+    private void handleIntent(Intent intent){
+        if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
+            String query = intent.getStringExtra(SearchManager.QUERY);
+            Toast.makeText(this, query, Toast.LENGTH_SHORT).show();
+        }
     }
 }

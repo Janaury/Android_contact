@@ -3,4 +3,5 @@
     <color name="colorFloatBar">#C1CDCD</color>
     <color name="colorPrimary">#009688</color>
     <color name="colorWhite">#ffffff</color>
+    <color name="colorActive">#FF00AC9C</color>
 </resources>

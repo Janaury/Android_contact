@@ -52,7 +52,7 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ViewHold
         ContactDetails contact = contacts.get(position);
         holder.firstChar_view.setText(contact.getFirstChar());
         holder.name_view.setText(contact.getName());
-        if((position == 0) || (contacts.get(position - 1).getFirstChar() != contact.getFirstChar())){
+        if((position == 0) || !(contacts.get(position - 1).getFirstChar().equals(contact.getFirstChar()))){
             holder.firstChar_view.setVisibility(View.VISIBLE);
         }else{
             holder.firstChar_view.setVisibility(View.GONE);
